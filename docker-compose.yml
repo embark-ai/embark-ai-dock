@@ -1,0 +1,14 @@
+# docker compose run --rm sandbox init     create the wallet
+# docker compose run --rm sandbox check    show its state
+# MCP clients should use `docker run -i ...` (see examples/), not compose.
+services:
+  sandbox:
+    build: .
+    image: embarkai/agent-sandbox:local
+    env_file: .env
+    volumes:
+      - embark-data:/data
+
+volumes:
+  embark-data:
+    name: embark-data

@@ -1,0 +1,36 @@
+# EmbarkAI Agent Sandbox
+
+> Docker image that gives an AI agent an EmbarkAI server wallet through MCP. The wallet key is split by MPC between the container and EmbarkAI; EmbarkAI signs only operations that pass the project's policies (allowed addresses, spending limits, chains).
+
+To set the sandbox up for a user, follow AGENTS.md step by step.
+
+## This repository
+
+- [AGENTS.md](./AGENTS.md): step-by-step setup for coding agents, rules and troubleshooting
+- [README.md](./README.md): what the sandbox is, how it works, security model
+- [.env.example](./.env.example): every configuration variable
+- [examples/](./examples/README.md): MCP configs for Claude Code, Claude Desktop, Cursor, Codex and a custom agent
+
+## Commands
+
+- `docker build -t embarkai/agent-sandbox .`: build the image
+- `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox init`: create or recover the wallet, back it up, print its address
+- `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox check`: show the wallet state
+- `docker run -i --rm --env-file /abs/path/.env -v embark-data:/data embarkai/agent-sandbox`: the MCP server on stdio (what MCP clients run)
+
+## MCP tools
+
+- get_wallet_info: wallet addresses and active chain
+- get_balance: native or ERC-20 balance
+- transfer: send native or ERC-20 tokens
+- read_contract: call a view/pure contract function
+- get_transaction_status: status of a submitted UserOperation
+- list_supported_chains, switch_chain: networks
+
+## EmbarkAI documentation
+
+- [Docs index for LLMs](https://docs.embarkai.io/llms.txt)
+- [AI agents and MCP](https://docs.embarkai.io/ai-agents)
+- [MCP tools reference](https://docs.embarkai.io/ai-agents/tools-reference)
+- [Server wallets](https://docs.embarkai.io/core-sdk/server-wallets)
+- [Dashboard](https://dashboard.embarkai.io)

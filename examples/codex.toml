@@ -1,0 +1,3 @@
+[mcp_servers.embarkai]
+command = "docker"
+args = ["run", "-i", "--rm", "--env-file", "/absolute/path/to/.env", "-v", "embark-data:/data", "embarkai/agent-sandbox"]
