@@ -42,6 +42,6 @@ Goal: the user's AI client gets an `embarkai` MCP server backed by an EmbarkAI s
 | `EMBARK_API_KEY environment variable is required` | `.env` not found: the `--env-file` path must be absolute |
 | `Chain ... is not supported` | Use a chain ID from `list_supported_chains` |
 | Wallet exists, no keyshare | Mount the right volume (`-v embark-data:/data`), or set `EMBARK_WALLET_BACKUP_PASSWORD` and rerun `init` to restore from ShareVault |
-| `Timeout waiting for UserOperation receipt` with a `userOpHash` | The operation was submitted and usually lands shortly (Lumia Pulsar testnet produces a block about once a minute). Check `get_transaction_status` with that hash; do not resend |
+| `Timeout waiting for UserOperation receipt` with a `userOpHash` | Expected on Lumia Pulsar (a block about once a minute; tools wait 45s). The operation was submitted: check `get_transaction_status` with that hash, do not resend |
 | More detail needed | Set `EMBARK_DEBUG=true`; logs go to stderr |
 | Wallet state | `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox check` |
