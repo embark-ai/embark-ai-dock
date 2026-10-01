@@ -59,6 +59,8 @@ The client share on disk alone is not enough to move funds, which is what makes 
 
 The wallet is a smart account. The same wallet works on every supported chain: Lumia Prism (mainnet), Lumia Pulsar (testnet, default), Lumia Beam (legacy testnet), Sepolia, BSC Testnet, Arbitrum Sepolia, Base Sepolia.
 
+> **Slow confirmations on Lumia Pulsar are normal.** The testnet produces a block about once a minute, while a write tool (`transfer`, `write_contract`, `send_transaction`) waits up to 45 seconds for confirmation. So a write often returns `Timeout waiting for UserOperation receipt` together with a `userOpHash`. The operation was submitted and usually lands within a minute: the agent should check `get_transaction_status` with that hash, not send it again. You can raise the wait with `EMBARK_RECEIPT_TIMEOUT_MS`, but only together with your MCP client's tool timeout (usually ~60 seconds): if the client gives up first, the agent gets no hash at all.
+
 ## Quick start
 
 You need Docker and an EmbarkAI account.
