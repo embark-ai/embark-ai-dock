@@ -53,7 +53,7 @@ The client share on disk alone is not enough to move funds, which is what makes 
 ```
 
 1. Your MCP client starts the container with `docker run -i` and talks to the MCP server over stdio.
-2. The agent calls tools: `get_wallet_info`, `get_balance`, `transfer`, `read_contract`, and others.
+2. The agent calls tools: `get_wallet_info`, `get_balance`, `transfer`, `write_contract`, and others.
 3. For a transaction, the sandbox builds an ERC-4337 UserOperation and signs it together with EmbarkAI. EmbarkAI checks your policies first.
 4. The UserOperation goes to the bundler. On supported networks the paymaster covers gas, so the wallet does not need native tokens for fees.
 
@@ -109,8 +109,6 @@ Start small, then give the agent more room:
 3. **Monitoring.** Have the agent watch balances or contract state and report changes.
 4. **Treasury agent.** Give the agent a small portfolio and a mandate ("keep 30% in stablecoins, rebalance weekly"), with policies limiting where funds may go and how much may move per day.
 
-Items 1–3 work with today's tools. Item 4 needs the agent to call contracts (approve, deposit, swap), which `@embarkai/mcp` does not support yet.
-
 Which strategy the agent follows is up to you and your agent. The sandbox makes sure it can act, and that it acts only within the rules you set.
 
 ## Repository layout
@@ -136,10 +134,12 @@ Which strategy the agent follows is up to you and your agent. The sandbox makes 
 | `get_balance` | Native or ERC-20 balance of the wallet or any address |
 | `transfer` | Send native or ERC-20 tokens |
 | `read_contract` | Call a view/pure function of any contract |
+| `write_contract` | Call a state-changing contract function (approve, deposit, swap, ...) |
+| `send_transaction` | Send one or more calls, batched atomically (e.g. approve + deposit) |
 | `get_transaction_status` | Status of a submitted UserOperation |
 | `list_supported_chains`, `switch_chain` | Networks |
 
-Full schemas: [Tools Reference](https://docs.embarkai.io/ai-agents/tools-reference).
+Full schemas: [`@embarkai/mcp` README](https://www.npmjs.com/package/@embarkai/mcp).
 
 ## Security notes
 

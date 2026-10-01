@@ -24,6 +24,8 @@ To set the sandbox up for a user, follow AGENTS.md step by step.
 - get_balance: native or ERC-20 balance
 - transfer: send native or ERC-20 tokens
 - read_contract: call a view/pure contract function
+- write_contract: call a state-changing contract function (approve, deposit, swap)
+- send_transaction: one or more calls, batched atomically in one user operation
 - get_transaction_status: status of a submitted UserOperation
 - list_supported_chains, switch_chain: networks
 

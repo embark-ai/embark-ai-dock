@@ -9,7 +9,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@embarkai/core": "0.4.15",
-    "@embarkai/mcp": "0.2.4"
+    "@embarkai/core": "0.4.21",
+    "@embarkai/mcp": "0.2.5"
   }
 }
