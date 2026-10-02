@@ -3,6 +3,7 @@
 #   mcp    (default) EmbarkAI MCP server on stdio — what MCP clients run with `docker run -i`
 #   init   create or recover the wallet and back it up
 #   check  print the wallet state without changing anything
+#   demo   read-only walkthrough of the MCP tools, no AI model needed
 #
 # stdout belongs to the MCP protocol in `mcp` mode: nothing here may print to it.
 set -e
@@ -19,6 +20,9 @@ case "$cmd" in
     ;;
   check)
     exec node /app/scripts/init.mjs --check "$@"
+    ;;
+  demo)
+    exec node /app/scripts/demo.mjs "$@"
     ;;
   *)
     exec "$cmd" "$@"
