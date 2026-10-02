@@ -16,6 +16,7 @@ To set the sandbox up for a user, follow AGENTS.md step by step.
 - `docker build -t embarkai/agent-sandbox .`: build the image
 - `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox init`: create or recover the wallet, back it up, print its address
 - `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox check`: show the wallet state
+- `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox demo`: read-only walkthrough of the MCP tools (chains, address, balance, a contract read)
 - `docker run -i --rm --env-file /abs/path/.env -v embark-data:/data embarkai/agent-sandbox`: the MCP server on stdio (what MCP clients run)
 
 ## MCP tools

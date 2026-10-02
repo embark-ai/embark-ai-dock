@@ -86,6 +86,14 @@ docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox init
 
 `init` creates the server wallet, stores the encrypted client share in the `embark-data` volume, backs it up to ShareVault and prints the wallet address. Running it again is safe: it only reports the state, or restores the share from ShareVault if the volume is new. `check` prints the state without changing anything.
 
+See it work before connecting an agent:
+
+```bash
+docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox demo
+```
+
+`demo` starts the MCP server and calls its tools the way an agent does: lists the chains, reads the wallet address and balance, and reads the latest block from a contract. It sends no transactions.
+
 **4. Connect your agent.** For Claude Code:
 
 ```bash
@@ -121,8 +129,9 @@ Which strategy the agent follows is up to you and your agent. The sandbox makes 
 ├── docker-compose.yml  # init/check via compose
 ├── .env.example
 ├── scripts/
-│   ├── entrypoint.sh   # mcp (default) | init | check
-│   └── init.mjs        # create or restore the wallet, back up to ShareVault, print address
+│   ├── entrypoint.sh   # mcp (default) | init | check | demo
+│   ├── init.mjs        # create or restore the wallet, back up to ShareVault, print address
+│   └── demo.mjs        # read-only walkthrough of the MCP tools, no AI model needed
 ├── examples/           # MCP client configs: Claude Code, Claude Desktop, Cursor, Codex, custom agent
 ├── llms.txt            # entry point for coding agents
 └── AGENTS.md           # step-by-step setup instructions for coding agents

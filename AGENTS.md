@@ -28,12 +28,14 @@ Goal: the user's AI client gets an `embarkai` MCP server backed by an EmbarkAI s
    It prints the smart account address. Show it to the user.
    If it says the wallet already exists but the volume has no keyshare, do not pick a new wallet ID on your own: ask the user.
 
-6. **Register the MCP server** in the user's client, using the absolute path of `.env`. Configs for each client are in `examples/`. For Claude Code:
+6. **Show it working.** `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox demo` lists the chains, the wallet address and balance, and reads a contract. Nothing is sent.
+
+7. **Register the MCP server** in the user's client, using the absolute path of `.env`. Configs for each client are in `examples/`. For Claude Code:
    `claude mcp add embarkai -- docker run -i --rm --env-file <ABSOLUTE_PATH>/.env -v embark-data:/data embarkai/agent-sandbox`
 
-7. **Verify.** Call `get_wallet_info` and `list_supported_chains`. The wallet address must match the one from step 5.
+8. **Verify.** Call `get_wallet_info` and `list_supported_chains`. The wallet address must match the one from step 5.
 
-8. **Suggest policies.** Tell the user that in the dashboard they can restrict the wallet: allowed destination addresses, per-transaction and per-day limits, allowed chains. EmbarkAI refuses to sign anything outside them.
+9. **Suggest policies.** Tell the user that in the dashboard they can restrict the wallet: allowed destination addresses, per-transaction and per-day limits, allowed chains. EmbarkAI refuses to sign anything outside them.
 
 ## Troubleshooting
 
