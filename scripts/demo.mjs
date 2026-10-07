@@ -52,7 +52,7 @@ async function call(name, args = {}, label = name) {
   return data;
 }
 
-console.log('embarkAI sandbox demo: talking to the MCP server the way an AI agent does.');
+console.log('EmbarkAI sandbox demo: talking to the MCP server the way an AI agent does.');
 
 const { tools } = await client.listTools();
 console.log(`\nThe server offers ${tools.length} tools: ${tools.map((t) => t.name).join(', ')}`);

@@ -2,7 +2,7 @@
 
 > A ready-made Docker environment that lets any AI agent work on-chain — with a real wallet, under rules you control.
 
-**Status:** early preview. The image is not published to a registry yet: build it locally (step 3 below).
+**Status:** early preview. A multi-arch image (linux/amd64, linux/arm64) is published to GitHub Container Registry on every push to `main`; you can also build it locally (step 3 below).
 
 ## What it is
 
@@ -77,12 +77,15 @@ EMBARK_WALLET_BACKUP_PASSWORD=...      # encrypts the backup in EmbarkAI ShareVa
 EMBARK_CHAIN_ID=1279885899             # Lumia Pulsar testnet
 ```
 
-**3. Build the image and create the wallet.**
+**3. Get the image and create the wallet.**
 
 ```bash
-docker build -t embarkai/agent-sandbox .
+docker pull ghcr.io/embark-ai/embark-ai-dock:latest
+docker tag ghcr.io/embark-ai/embark-ai-dock:latest embarkai/agent-sandbox
 docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox init
 ```
+
+Or build it yourself from this repository: `docker build -t embarkai/agent-sandbox .` (the rest of this README uses the `embarkai/agent-sandbox` name either way).
 
 `init` creates the server wallet, stores the encrypted client share in the `embark-data` volume, backs it up to ShareVault and prints the wallet address. Running it again is safe: it only reports the state, or restores the share from ShareVault if the volume is new. `check` prints the state without changing anything.
 
@@ -125,6 +128,7 @@ Which strategy the agent follows is up to you and your agent. The sandbox makes 
 
 ```
 .
+├── .github/workflows/  # CI: builds the image for amd64 and arm64 on PRs, publishes it to GHCR from main
 ├── Dockerfile          # Node 22, pinned @embarkai/* packages (package-lock.json), non-root user
 ├── docker-compose.yml  # init/check via compose
 ├── .env.example
@@ -156,8 +160,13 @@ Full schemas: [`@embarkai/mcp` README](https://www.npmjs.com/package/@embarkai/m
 
 - The client share is encrypted with `EMBARK_KEYSHARE_PASSWORD` and stored in a Docker volume. Anyone with both the volume and the password holds one of the two shares, so treat them like a credential.
 - The ShareVault backup is the only way to recover the client share if the volume is lost. Keep `EMBARK_WALLET_BACKUP_PASSWORD` somewhere other than the machine running the sandbox.
-- Never commit `.env`.
+- Never commit `.env`. Write its values without quotes: `docker run --env-file` keeps the quotes, `docker compose` strips them, and a password that differs between the two cannot decrypt the keyshare.
+- Keep the keyshare in a named volume (`-v embark-data:/data`), as in every command above. A bind mount such as `-v ./data:/data` works on Docker Desktop, but on a Linux host the directory must be owned by uid 1000 (the `node` user in the image) or the container cannot write to it.
 - Start on testnet. Move to mainnet only with policies in place.
+
+## Contributing and security
+
+Issues and pull requests are welcome. Security problems go through [SECURITY.md](./SECURITY.md), not public issues. The code is released under the [MIT License](./LICENSE).
 
 ## Links
 
