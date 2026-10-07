@@ -4,6 +4,7 @@
 #   init   create or recover the wallet and back it up
 #   check  print the wallet state without changing anything
 #   demo   read-only walkthrough of the MCP tools, no AI model needed
+#   monitor  poll balances and report changes, no AI model needed (--once for a single snapshot)
 #
 # stdout belongs to the MCP protocol in `mcp` mode: nothing here may print to it.
 set -e
@@ -23,6 +24,9 @@ case "$cmd" in
     ;;
   demo)
     exec node /app/scripts/demo.mjs "$@"
+    ;;
+  monitor)
+    exec node /app/scripts/monitor.mjs "$@"
     ;;
   *)
     exec "$cmd" "$@"

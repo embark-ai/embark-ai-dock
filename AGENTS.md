@@ -8,6 +8,7 @@ Goal: the user's AI client gets an `embarkai` MCP server backed by an EmbarkAI s
 - Never print, log or commit the values of `EMBARK_API_KEY`, `EMBARK_KEYSHARE_PASSWORD` or `EMBARK_WALLET_BACKUP_PASSWORD`. They live only in `.env`, which is git-ignored.
 - Never delete the `embark-data` Docker volume or anything under `/data`. It holds the wallet's keyshare; losing it without a backup loses the wallet and its funds.
 - Use testnet (`EMBARK_CHAIN_ID=1279885899`, Lumia Pulsar) unless the user explicitly asks for mainnet.
+- The wallet is on-chain only. If the user asks about a centralized exchange account (Binance, Bybit, Coinbase and similar), explain that the sandbox cannot reach it: that needs the exchange's own API keys and a separate MCP server.
 - Ask the user before sending any transaction.
 
 ## Steps
@@ -47,3 +48,4 @@ Goal: the user's AI client gets an `embarkai` MCP server backed by an EmbarkAI s
 | `Timeout waiting for UserOperation receipt` with a `userOpHash` | Expected on Lumia Pulsar (a block about once a minute; tools wait 45s). The operation was submitted: check `get_transaction_status` with that hash, do not resend |
 | More detail needed | Set `EMBARK_DEBUG=true`; logs go to stderr |
 | Wallet state | `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox check` |
+| Watch balances without a model | `docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox monitor` (see "Portfolio monitoring" in README.md) |
