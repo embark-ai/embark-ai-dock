@@ -15,6 +15,8 @@ The sandbox is a Docker image with everything an AI agent needs to act on a bloc
 
 You bring three values from the EmbarkAI dashboard and a password. You run three commands. Your agent has a wallet.
 
+> **Scope: on-chain only.** The wallet lives on the supported blockchains below. Accounts on centralized exchanges (Binance, Bybit, Coinbase and similar) are not reachable from the sandbox: they need the exchange's own API keys and a separate MCP server. If your portfolio is on an exchange, this sandbox can watch and move only the part you hold on-chain.
+
 No digging through the API reference, no hand-written signing code, no key management of your own.
 
 ## Why it is safe to hand an agent a wallet
@@ -119,10 +121,44 @@ Start small, then give the agent more room:
 
 1. **Primitives.** Wallet address, balances, chain switching, reading a contract.
 2. **Payments.** Send test tokens to an allowed address; then to a denied one, or over the daily limit, and see the refusal.
-3. **Monitoring.** Have the agent watch balances or contract state and report changes.
+3. **Monitoring.** Have the agent watch balances or contract state and report changes. A ready-made example is below.
 4. **Treasury agent.** Give the agent a small portfolio and a mandate ("keep 30% in stablecoins, rebalance weekly"), with policies limiting where funds may go and how much may move per day.
 
 Which strategy the agent follows is up to you and your agent. The sandbox makes sure it can act, and that it acts only within the rules you set.
+
+### Example: portfolio monitoring
+
+The same task two ways: as a script that needs no AI model, and as a prompt for an agent.
+
+**Without a model.** `monitor` polls the wallet's native and ERC-20 balances on the chains you list and reports what changed since the last poll. It is built on the same MCP tools an agent uses (`switch_chain`, `get_balance`), so it shows exactly what an agent can see.
+
+```bash
+# .env
+MONITOR_CHAINS=1279885899,11155111                                   # Lumia Pulsar + Sepolia
+MONITOR_TOKENS=11155111:0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238   # USDC on Sepolia
+MONITOR_INTERVAL_SEC=600
+MONITOR_THRESHOLD_PCT=1
+
+docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox monitor          # poll until stopped
+docker run --rm --env-file .env -v embark-data:/data embarkai/agent-sandbox monitor --once   # one snapshot
+```
+
+```
+Monitoring 0x6F87...DF99 on 2 chain(s), 1 token(s), every 600s. Changes over 1% are reported.
+
+2026-10-07T09:40:12.318Z
+  Lumia Pulsar Testnet              0.5 LUMIA
+  Sepolia                          0.02 ETH      changed: 0.05 -> 0.02 (-60.00%)
+  Sepolia                           100 USDC     changed: 0 -> 100
+```
+
+The last snapshot is stored in the `embark-data` volume, so a restarted monitor still compares against the previous run. Sends no transactions.
+
+**With an agent.** Connect the sandbox to Claude Code (step 4 of the quick start) and give it the mandate in plain words:
+
+> Every 10 minutes check my wallet balance on Lumia Pulsar and Sepolia, including USDC `0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238` on Sepolia. Keep a table of the previous values. Tell me only when a balance moves by more than 1%, or when a token appears or disappears. Never send anything.
+
+The agent will call `switch_chain` and `get_balance` in a loop and summarise changes. The `transfer` and `write_contract` tools are still available to it, so if you want to be sure it only reads, set the wallet's policies in the dashboard to deny all destinations.
 
 ## Repository layout
 
@@ -133,9 +169,10 @@ Which strategy the agent follows is up to you and your agent. The sandbox makes 
 ├── docker-compose.yml  # init/check via compose
 ├── .env.example
 ├── scripts/
-│   ├── entrypoint.sh   # mcp (default) | init | check | demo
+│   ├── entrypoint.sh   # mcp (default) | init | check | demo | monitor
 │   ├── init.mjs        # create or restore the wallet, back up to ShareVault, print address
-│   └── demo.mjs        # read-only walkthrough of the MCP tools, no AI model needed
+│   ├── demo.mjs        # read-only walkthrough of the MCP tools, no AI model needed
+│   └── monitor.mjs     # balance monitor across chains, no AI model needed
 ├── examples/           # MCP client configs: Claude Code, Claude Desktop, Cursor, Codex, custom agent
 ├── llms.txt            # entry point for coding agents
 └── AGENTS.md           # step-by-step setup instructions for coding agents
