@@ -1,6 +1,6 @@
-# EmbarkAI Agent Sandbox
+# embarkAI Agent Sandbox
 
-> Docker image that gives an AI agent an EmbarkAI server wallet through MCP. On-chain only: centralized exchange accounts (Binance, Bybit, Coinbase) are out of scope. The wallet key is split by MPC between the container and EmbarkAI; EmbarkAI signs only operations that pass the project's policies (allowed addresses, spending limits, chains).
+> Docker image that gives an AI agent an embarkAI server wallet through MCP. On-chain only: centralized exchange accounts (Binance, Bybit, Coinbase) are out of scope. The wallet key is split by MPC between the container and embarkAI; embarkAI signs only operations that pass the project's policies (allowed addresses, spending limits, chains).
 
 To set the sandbox up for a user, follow AGENTS.md step by step.
 
@@ -31,7 +31,7 @@ To set the sandbox up for a user, follow AGENTS.md step by step.
 - get_transaction_status: status of a submitted UserOperation
 - list_supported_chains, switch_chain: networks
 
-## EmbarkAI documentation
+## embarkAI documentation
 
 - [Docs index for LLMs](https://docs.embarkai.io/llms.txt)
 - [AI agents and MCP](https://docs.embarkai.io/ai-agents)

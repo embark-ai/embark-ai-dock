@@ -1,4 +1,4 @@
-# EmbarkAI Agent Sandbox
+# embarkAI Agent Sandbox
 
 > A ready-made Docker environment that lets any AI agent work on-chain — with a real wallet, under rules you control.
 
@@ -6,14 +6,14 @@
 
 ## What it is
 
-The sandbox is a Docker image with everything an AI agent needs to act on a blockchain through [EmbarkAI](https://docs.embarkai.io):
+The sandbox is a Docker image with everything an AI agent needs to act on a blockchain through [embarkAI](https://docs.embarkai.io):
 
-- Node.js 22 and the EmbarkAI packages (`@embarkai/core`, `@embarkai/mcp`) installed and pinned;
-- the EmbarkAI MCP server, which exposes wallet and chain operations as tools any MCP client understands (Claude, Codex, Cursor, your own agent);
+- Node.js 22 and the embarkAI packages (`@embarkai/core`, `@embarkai/mcp`) installed and pinned;
+- the embarkAI MCP server, which exposes wallet and chain operations as tools any MCP client understands (Claude, Codex, Cursor, your own agent);
 - an init command that creates the agent's **server wallet** and backs it up;
 - an `llms.txt` and agent instructions, so a coding agent can read this repository and set the sandbox up on its own.
 
-You bring three values from the EmbarkAI dashboard and a password. You run three commands. Your agent has a wallet.
+You bring three values from the embarkAI dashboard and a password. You run three commands. Your agent has a wallet.
 
 > **Scope: on-chain only.** The wallet lives on the supported blockchains below. Accounts on centralized exchanges (Binance, Bybit, Coinbase and similar) are not reachable from the sandbox: they need the exchange's own API keys and a separate MCP server. If your portfolio is on an exchange, this sandbox can watch and move only the part you hold on-chain.
 
@@ -21,27 +21,27 @@ No digging through the API reference, no hand-written signing code, no key manag
 
 ## Why it is safe to hand an agent a wallet
 
-An EmbarkAI wallet has no private key anywhere. The key is split by MPC (DKLS23 threshold signatures) into two shares:
+An embarkAI wallet has no private key anywhere. The key is split by MPC (DKLS23 threshold signatures) into two shares:
 
 | Share | Where it lives | Who controls it |
 |---|---|---|
 | Client share | Inside the sandbox, in an encrypted Docker volume | You |
-| Server share | EmbarkAI TSS service | EmbarkAI, enforcing your policies |
+| Server share | embarkAI TSS service | embarkAI, enforcing your policies |
 
-A transaction needs **both** shares to be signed. Before EmbarkAI signs with its share, it checks the operation against the policies set for the project in the dashboard:
+A transaction needs **both** shares to be signed. Before embarkAI signs with its share, it checks the operation against the policies set for the project in the dashboard:
 
 - **destinations** — allow and deny lists of addresses the wallet may send to;
 - **limits** — per transaction, per day, per month, and number of transactions per day;
 - **chains** — which networks the wallet may operate on.
 
-If the agent tries to step outside the sandbox — a wrong address, too much money, too many transactions — EmbarkAI simply does not sign. The agent cannot get around this, because it never holds a full key. Every signing decision is recorded in the signing history, so what the agent did and what was refused can be audited afterwards.
+If the agent tries to step outside the sandbox — a wrong address, too much money, too many transactions — embarkAI simply does not sign. The agent cannot get around this, because it never holds a full key. Every signing decision is recorded in the signing history, so what the agent did and what was refused can be audited afterwards.
 
 The client share on disk alone is not enough to move funds, which is what makes a file-based share acceptable for an experiment. For production, move it to a secrets manager (HashiCorp Vault, AWS KMS and similar).
 
 ## How it works
 
 ```
- Your AI client                     Sandbox container                    EmbarkAI
+ Your AI client                     Sandbox container                    embarkAI
  (Claude, Codex,      stdio      ┌──────────────────────────┐   HTTPS   ┌──────────────┐
   Cursor, own agent) ──────────► │ @embarkai/mcp            │ ────────► │ TSS service  │
                       MCP tools  │   wallet, balances,      │  2-party  │  server share│
@@ -56,7 +56,7 @@ The client share on disk alone is not enough to move funds, which is what makes 
 
 1. Your MCP client starts the container with `docker run -i` and talks to the MCP server over stdio.
 2. The agent calls tools: `get_wallet_info`, `get_balance`, `transfer`, `write_contract`, and others.
-3. For a transaction, the sandbox builds an ERC-4337 UserOperation and signs it together with EmbarkAI. EmbarkAI checks your policies first.
+3. For a transaction, the sandbox builds an ERC-4337 UserOperation and signs it together with embarkAI. embarkAI checks your policies first.
 4. The UserOperation goes to the bundler. On supported networks the paymaster covers gas, so the wallet does not need native tokens for fees.
 
 The wallet is a smart account. The same wallet works on every supported chain: Lumia Prism (mainnet), Lumia Pulsar (testnet, default), Lumia Beam (legacy testnet), Sepolia, BSC Testnet, Arbitrum Sepolia, Base Sepolia.
@@ -65,7 +65,7 @@ The wallet is a smart account. The same wallet works on every supported chain: L
 
 ## Quick start
 
-You need Docker and an EmbarkAI account.
+You need Docker and an embarkAI account.
 
 **1. Get your credentials.** Sign up at [dashboard.embarkai.io](https://dashboard.embarkai.io), create a project, open **Server Wallets** and create an API key (`lp_...`). It is shown only once.
 
@@ -75,7 +75,7 @@ You need Docker and an EmbarkAI account.
 EMBARK_API_KEY=lp_...                  # project API key from the dashboard
 EMBARK_WALLET_ID=my-research-agent     # any unique name for the agent's wallet
 EMBARK_KEYSHARE_PASSWORD=...           # encrypts the client share on disk
-EMBARK_WALLET_BACKUP_PASSWORD=...      # encrypts the backup in EmbarkAI ShareVault
+EMBARK_WALLET_BACKUP_PASSWORD=...      # encrypts the backup in embarkAI ShareVault
 EMBARK_CHAIN_ID=1279885899             # Lumia Pulsar testnet
 ```
 
@@ -109,11 +109,11 @@ For Claude Desktop, Cursor, Codex or your own agent, use the same `docker run -i
 
 **5. Talk to it.** Ask your agent: *"What is my wallet address and balance?"*
 
-**6. Set the rules.** In the dashboard, add policies for the wallet: which addresses it may pay, and how much per day. Then try to break them, and watch EmbarkAI refuse.
+**6. Set the rules.** In the dashboard, add policies for the wallet: which addresses it may pay, and how much per day. Then try to break them, and watch embarkAI refuse.
 
 ### Let your agent do the setup
 
-Point Claude Code, Codex or another coding agent at this repository and say *"set up the EmbarkAI sandbox"*. It reads [`llms.txt`](./llms.txt) and [`AGENTS.md`](./AGENTS.md), asks you for the API key and passwords, and runs the steps above.
+Point Claude Code, Codex or another coding agent at this repository and say *"set up the embarkAI sandbox"*. It reads [`llms.txt`](./llms.txt) and [`AGENTS.md`](./AGENTS.md), asks you for the API key and passwords, and runs the steps above.
 
 ## What to try
 

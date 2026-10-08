@@ -2,7 +2,7 @@
   "name": "embarkai-agent-sandbox",
   "version": "0.1.0",
   "private": true,
-  "description": "Docker environment that gives an AI agent an EmbarkAI server wallet through MCP",
+  "description": "Docker environment that gives an AI agent an embarkAI server wallet through MCP",
   "type": "module",
   "license": "MIT",
   "engines": {
